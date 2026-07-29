@@ -1,4 +1,4 @@
-package org.example.sniper.swing;
+package org.example.auctionsniper.swing;
 
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.IndicativeSentencesGeneration;

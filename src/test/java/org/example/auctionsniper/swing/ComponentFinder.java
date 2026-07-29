@@ -1,4 +1,4 @@
-package org.example.sniper.swing;
+package org.example.auctionsniper.swing;
 
 import java.awt.*;
 import java.util.Optional;
