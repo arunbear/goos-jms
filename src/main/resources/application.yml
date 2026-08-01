@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: goos-jms
+  artemis:
+    mode: embedded
+    embedded:
+      enabled: true
+      persistent: false
+
+sniper:
+  demo:
+    queue: demo-queue
+
+logging:
+  level:
+    org.apache.activemq.audit: OFF

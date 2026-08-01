@@ -1,5 +1,6 @@
 package org.example.auctionsniper;
 
+import org.springframework.jms.core.JmsClient;
 import org.springframework.stereotype.Controller;
 
 import javax.swing.*;
@@ -16,7 +17,13 @@ public class MainWindow extends JFrame {
 
     private final JLabel sniperStatus = createLabel(STATUS_JOINING);
 
-    public MainWindow() throws HeadlessException {
+    private final ConfigProperties properties;
+    private final JmsClient jmsClient;
+
+    public MainWindow(ConfigProperties properties, JmsClient jmsClient) throws HeadlessException {
+        this.properties = properties;
+        this.jmsClient = jmsClient;
+
         super("Auction Sniper");
         setName(MAIN_WINDOW_NAME);
         add(sniperStatus);
@@ -24,6 +31,10 @@ public class MainWindow extends JFrame {
 
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    }
+
+    public void joinAuction() {
+        jmsClient.destination(properties.queue()).send("");
     }
 
     private static JLabel createLabel(String initialText) {
