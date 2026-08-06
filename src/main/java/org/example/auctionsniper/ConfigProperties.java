@@ -2,6 +2,8 @@ package org.example.auctionsniper;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties(prefix = "sniper.demo")
-public record ConfigProperties(String queue) {
+@ConfigurationProperties(prefix = "messaging")
+public record ConfigProperties(Auction auction, Sniper sniper) {
+    public record Auction(String queue) {}
+    public record Sniper(String queue) {}
 }

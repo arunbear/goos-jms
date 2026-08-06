@@ -7,9 +7,11 @@ spring:
       enabled: true
       persistent: false
 
-sniper:
-  demo:
-    queue: demo-queue
+messaging:
+  auction:
+    queue: queue-auction-house
+  sniper:
+    queue: queue-sniper
 
 logging:
   level:

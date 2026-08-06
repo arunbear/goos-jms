@@ -1,6 +1,10 @@
 package org.example.auctionsniper;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.jms.annotation.JmsListener;
 import org.springframework.jms.core.JmsClient;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Controller;
 
 import javax.swing.*;
@@ -20,6 +24,8 @@ public class MainWindow extends JFrame {
     private final ConfigProperties properties;
     private final JmsClient jmsClient;
 
+    private static final Logger logger = LoggerFactory.getLogger(MainWindow.class);
+
     public MainWindow(ConfigProperties properties, JmsClient jmsClient) throws HeadlessException {
         this.properties = properties;
         this.jmsClient = jmsClient;
@@ -34,7 +40,13 @@ public class MainWindow extends JFrame {
     }
 
     public void joinAuction() {
-        jmsClient.destination(properties.queue()).send("");
+        jmsClient.destination(properties.auction().queue()).send("");
+    }
+
+    @JmsListener(destination = "${messaging.sniper.queue}")
+    public void receiveMessage(@Payload(required = false) String message) {
+        logger.info("received a Message");
+        showStatus(STATUS_LOST);
     }
 
     private static JLabel createLabel(String initialText) {
