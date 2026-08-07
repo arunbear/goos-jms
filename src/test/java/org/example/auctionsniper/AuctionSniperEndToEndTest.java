@@ -13,7 +13,7 @@ import org.springframework.jms.core.JmsClient;
 
 import javax.swing.*;
 
-import java.util.Optional;
+import java.awt.*;
 
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.awaitility.Awaitility.await;
@@ -48,40 +48,45 @@ public class AuctionSniperEndToEndTest {
         then(app.isVisible()).isTrue();
         then(app.getName()).isEqualTo("Auction Sniper Main");
 
-        var nextStep = "Sniper shows it is joining auction";
-        // when
-        JLabel status = findComponentByNameAsType(app, MainWindow.SNIPER_STATUS_NAME, JLabel.class);
-        then(status.getText())
-            .as(nextStep)
-            .isEqualTo(MainWindow.STATUS_JOINING);
+        sniper_shows_it_is_joining_auction(app);
+        auction_checks_for_joining_message_from_sniper();
 
-        nextStep = "Got joining message from Sniper";
-        // when
-        var message = auctionChecksForJoiningMessageFromSniper();
-        then(message).as(nextStep).isNotEmpty();
-
-        var finalStep = "Sniper shows it has lost auction";
         // when
         auctionAnnouncesItHasClosed();
-        log.info(finalStep);
+        // then
+        sniper_shows_it_has_lost_auction(app);
+    }
+
+    private void sniper_shows_it_is_joining_auction(Container app) {
+        // when
+        var status = findComponentByNameAsType(app, MainWindow.SNIPER_STATUS_NAME, JLabel.class);
+
+        then(status.getText()).isEqualTo(MainWindow.STATUS_JOINING);
+    }
+
+    private void auction_checks_for_joining_message_from_sniper() {
+        // when
+        var message = jmsClient.destination(configProperties.auction().queue())
+            .withReceiveTimeout(1000)
+            .receive(String.class);
+
+        then(message).isNotEmpty();
+    }
+
+    private void sniper_shows_it_has_lost_auction(Container app) {
+        log.info("Checking sniper status");
+        JLabel status = findComponentByNameAsType(app, MainWindow.SNIPER_STATUS_NAME, JLabel.class);
+
         await().untilAsserted(() -> {
             // Wait for the sniper to get the message, otherwise we won't detect the status change.
             // In the book they use an external XMPP server for messaging, which introduces an actual delay.
             // We don't have that here due to using an embedded JMS broker.
-            then(status.getText())
-                .as(finalStep)
-                .isEqualTo(MainWindow.STATUS_LOST);
-        });
-    }
 
-    Optional<String> auctionChecksForJoiningMessageFromSniper() {
-        return jmsClient.destination(configProperties.auction().queue())
-            .withReceiveTimeout(1000)
-            .receive(String.class);
+            then(status.getText()).isEqualTo(MainWindow.STATUS_LOST);
+        });
     }
 
     void auctionAnnouncesItHasClosed() {
         jmsClient.destination(configProperties.sniper().queue()).send("");
     }
-
 }
