@@ -17,6 +17,10 @@ public class AuctionMessageTranslator {
 
         switch (type) {
             case "CLOSE" -> listener.auctionClosed();
+            case "PRICE" -> listener.currentPrice(
+                                Integer.parseInt(event.get("CurrentPrice")),
+                                Integer.parseInt(event.get("Increment"))
+                            );
             case null, default -> {
             }
         }

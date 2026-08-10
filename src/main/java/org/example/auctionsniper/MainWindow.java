@@ -46,7 +46,7 @@ public class MainWindow extends JFrame implements AuctionEventListener {
 
     @JmsListener(destination = "${messaging.sniper.queue}")
     public void receiveMessage(@Payload(required = false) String message) {
-        logger.info("received a Message");
+        logger.info("Received a message: {}", message);
         var messageTranslator = new AuctionMessageTranslator(this);
         messageTranslator.processMessage(message);
     }
@@ -54,6 +54,11 @@ public class MainWindow extends JFrame implements AuctionEventListener {
     @Override
     public void auctionClosed() {
         showStatus(STATUS_LOST);
+    }
+
+    @Override
+    public void currentPrice(int currentPrice, int increment) {
+
     }
 
     private static JLabel createLabel(String initialText) {
