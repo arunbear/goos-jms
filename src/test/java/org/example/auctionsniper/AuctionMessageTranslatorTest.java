@@ -29,7 +29,11 @@ class AuctionMessageTranslatorTest {
 
     @Test
     void notifies_auction_closed_when_close_message_received() {
-        translator.processMessage("");
+        // given
+        var message = "SOLVersion: 1.1; Event: CLOSE;";
+
+        // when
+        translator.processMessage(message);
 
         verify(listener).auctionClosed();
     }

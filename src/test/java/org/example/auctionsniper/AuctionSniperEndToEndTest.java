@@ -87,6 +87,7 @@ public class AuctionSniperEndToEndTest {
     }
 
     void auctionAnnouncesItHasClosed() {
-        jmsClient.destination(configProperties.sniper().queue()).send("");
+        var message = "SOLVersion: 1.1; Event: CLOSE;";
+        jmsClient.destination(configProperties.sniper().queue()).send(message);
     }
 }
