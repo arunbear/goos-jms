@@ -12,12 +12,13 @@ import javax.swing.border.LineBorder;
 import java.awt.*;
 
 @Controller
-public class MainWindow extends JFrame {
+public class MainWindow extends JFrame implements AuctionMessageListener {
 
     public static final String MAIN_WINDOW_NAME = "Auction Sniper Main";
     public static final String SNIPER_STATUS_NAME = "sniper status";
     public static final String STATUS_JOINING = "JOINING";
     public static final String STATUS_LOST = "LOST";
+    public static final String STATUS_BIDDING = "BIDDING";
 
     private final JLabel sniperStatus = createLabel(STATUS_JOINING);
 
@@ -46,6 +47,12 @@ public class MainWindow extends JFrame {
     @JmsListener(destination = "${messaging.sniper.queue}")
     public void receiveMessage(@Payload(required = false) String message) {
         logger.info("received a Message");
+        var messageTranslator = new AuctionMessageTranslator(this);
+        messageTranslator.processMessage(message);
+    }
+
+    @Override
+    public void auctionClosed() {
         showStatus(STATUS_LOST);
     }
 
