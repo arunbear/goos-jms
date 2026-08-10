@@ -37,4 +37,15 @@ class AuctionMessageTranslatorTest {
 
         verify(listener).auctionClosed();
     }
+
+    @Test
+    void notifies_bid_details_when_current_price_message_received() {
+        // given
+        var message = "SOLVersion: 1.1; Event: PRICE; CurrentPrice: 192; Increment: 7; Bidder: Someone else;";
+
+        // when
+        translator.processMessage(message);
+
+        verify(listener).currentPrice(192, 7);
+    }
 }

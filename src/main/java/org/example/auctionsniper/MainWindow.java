@@ -56,6 +56,11 @@ public class MainWindow extends JFrame implements AuctionMessageListener {
         showStatus(STATUS_LOST);
     }
 
+    @Override
+    public void currentPrice(int currentPrice, int increment) {
+
+    }
+
     private static JLabel createLabel(String initialText) {
         JLabel result = new JLabel(initialText);
         result.setName(SNIPER_STATUS_NAME);
