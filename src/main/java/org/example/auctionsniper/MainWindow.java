@@ -12,7 +12,7 @@ import javax.swing.border.LineBorder;
 import java.awt.*;
 
 @Controller
-public class MainWindow extends JFrame implements AuctionEventListener {
+public class MainWindow extends JFrame implements SniperListener {
 
     public static final String MAIN_WINDOW_NAME = "Auction Sniper Main";
     public static final String SNIPER_STATUS_NAME = "sniper status";
@@ -47,18 +47,16 @@ public class MainWindow extends JFrame implements AuctionEventListener {
     @JmsListener(destination = "${messaging.sniper.queue}")
     public void receiveMessage(@Payload(required = false) String message) {
         logger.info("Received a message: {}", message);
-        var messageTranslator = new AuctionMessageTranslator(this);
+        var messageTranslator =
+            new AuctionMessageTranslator(
+                new AuctionSniper(this)
+            );
         messageTranslator.processMessage(message);
     }
 
     @Override
-    public void auctionClosed() {
+    public void sniperLost() {
         showStatus(STATUS_LOST);
-    }
-
-    @Override
-    public void currentPrice(int currentPrice, int increment) {
-
     }
 
     private static JLabel createLabel(String initialText) {
