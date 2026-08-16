@@ -49,7 +49,7 @@ public class MainWindow extends JFrame implements SniperListener {
         logger.info("Received a message: {}", message);
         var messageTranslator =
             new AuctionMessageTranslator(
-                new AuctionSniper(this)
+                new AuctionSniper(this, _ -> { })
             );
         messageTranslator.processMessage(message);
     }
@@ -57,6 +57,11 @@ public class MainWindow extends JFrame implements SniperListener {
     @Override
     public void sniperLost() {
         showStatus(STATUS_LOST);
+    }
+
+    @Override
+    public void sniperBidding() {
+        logger.warn("not implemented yet");
     }
 
     private static JLabel createLabel(String initialText) {

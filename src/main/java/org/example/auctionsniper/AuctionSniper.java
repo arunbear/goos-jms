@@ -5,11 +5,13 @@ import org.slf4j.LoggerFactory;
 
 public class AuctionSniper implements AuctionEventListener {
     private final SniperListener sniperListener;
+    private final Auction auction;
 
     private static final Logger logger = LoggerFactory.getLogger(AuctionSniper.class);
 
-    public AuctionSniper(SniperListener sniperListener) {
+    public AuctionSniper(SniperListener sniperListener, Auction auction) {
         this.sniperListener = sniperListener;
+        this.auction = auction;
     }
 
     @Override
@@ -18,7 +20,8 @@ public class AuctionSniper implements AuctionEventListener {
     }
 
     @Override
-    public void currentPrice(int currentPrice, int increment) {
-        logger.warn("not implemented yet");
+    public void currentPrice(int price, int increment) {
+        auction.bid(price + increment);
+        sniperListener.sniperBidding();
     }
 }
