@@ -70,7 +70,7 @@ public class AuctionSniperEndToEndTest {
         // when
         auctionReportsPrice(1000, 98, "other bidder");
         // then
-        auction_has_received_bid(1098); // currently fails
+        auction_has_received_bid(1098);
     }
 
     private void auction_has_received_bid(int bid) {
