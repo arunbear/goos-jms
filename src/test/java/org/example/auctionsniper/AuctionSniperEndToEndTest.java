@@ -71,6 +71,10 @@ public class AuctionSniperEndToEndTest {
         auctionReportsPrice(1000, 98, "other bidder");
         // then
         auction_has_received_bid(1098);
+
+        // and when
+        auctionAnnouncesItHasClosed();
+        sniper_shows_it_has_lost_auction(app);
     }
 
     private void auction_has_received_bid(int bid) {
