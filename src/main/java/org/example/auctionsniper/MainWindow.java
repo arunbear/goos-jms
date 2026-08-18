@@ -68,7 +68,7 @@ public class MainWindow extends JFrame implements SniperListener {
 
     @Override
     public void sniperBidding() {
-        logger.warn("not implemented yet");
+        showStatus(STATUS_BIDDING);
     }
 
     private static JLabel createLabel(String initialText) {

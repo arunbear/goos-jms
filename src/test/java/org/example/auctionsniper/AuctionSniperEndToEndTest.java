@@ -71,6 +71,7 @@ public class AuctionSniperEndToEndTest {
         auctionReportsPrice(1000, 98, "other bidder");
         // then
         auction_has_received_bid(1098);
+        sniper_shows_it_is_bidding(app);
 
         // and when
         auctionAnnouncesItHasClosed();
@@ -116,6 +117,20 @@ public class AuctionSniperEndToEndTest {
 
             then(status.getText()).isEqualTo(MainWindow.STATUS_LOST);
         });
+    }
+
+    private void sniper_shows_it_is_bidding(Container app) {
+        log.info("Checking sniper status");
+        JLabel status = findComponentByNameAsType(app, MainWindow.SNIPER_STATUS_NAME, JLabel.class);
+
+        then(status.getText()).isEqualTo(MainWindow.STATUS_BIDDING);
+//        await().untilAsserted(() -> {
+//            // Wait for the sniper to get the message, otherwise we won't detect the status change.
+//            // In the book they use an external XMPP server for messaging, which introduces an actual delay.
+//            // We don't have that here due to using an embedded JMS broker.
+//
+//            then(status.getText()).isEqualTo(MainWindow.STATUS_BIDDING);
+//        });
     }
 
     void auctionAnnouncesItHasClosed() {
