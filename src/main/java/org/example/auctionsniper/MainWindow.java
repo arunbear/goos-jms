@@ -46,18 +46,7 @@ public class MainWindow extends JFrame implements SniperListener {
 
     private @NonNull AuctionMessageTranslator getMessageTranslator(ConfigProperties properties, JmsClient jmsClient) {
         final AuctionMessageTranslator messageTranslator;
-        Auction auction = new Auction() {
-            @Override
-            public void bid(int amount) {
-                var bidMessage = "SOLVersion: 1.1; Command: BID; Price: %d;".formatted(amount);
-                jmsClient.destination(properties.auction().queue()).send(bidMessage);
-            }
-
-            @Override
-            public void join() {
-                joinAuction();
-            }
-        };
+        Auction auction = new JMSAuction(jmsClient, properties);
         auction.join();
         messageTranslator = new AuctionMessageTranslator(
             new AuctionSniper(this, auction)
@@ -94,5 +83,26 @@ public class MainWindow extends JFrame implements SniperListener {
 
     public void showStatus(String status) {
         sniperStatus.setText(status);
+    }
+
+    private class JMSAuction implements Auction {
+        private final JmsClient jmsClient;
+        private final ConfigProperties properties;
+
+        public JMSAuction(JmsClient jmsClient, ConfigProperties properties) {
+            this.jmsClient = jmsClient;
+            this.properties = properties;
+        }
+
+        @Override
+        public void bid(int amount) {
+            var bidMessage = "SOLVersion: 1.1; Command: BID; Price: %d;".formatted(amount);
+            jmsClient.destination(properties.auction().queue()).send(bidMessage);
+        }
+
+        @Override
+        public void join() {
+            joinAuction();
+        }
     }
 }
