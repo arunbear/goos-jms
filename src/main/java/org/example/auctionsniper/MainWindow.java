@@ -1,6 +1,5 @@
 package org.example.auctionsniper;
 
-import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jms.annotation.JmsListener;
@@ -28,26 +27,19 @@ public class MainWindow extends JFrame implements SniperListener {
     private static final Logger logger = LoggerFactory.getLogger(MainWindow.class);
 
     public MainWindow(Auction auction) throws HeadlessException {
-        this.auction = auction;
-
         super("Auction Sniper");
+        this.auction = auction;
+        auction.join();
+
+        messageTranslator = new AuctionMessageTranslator(
+            new AuctionSniper(this, auction)
+        );
         setName(MAIN_WINDOW_NAME);
         add(sniperStatus);
         pack();
 
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        messageTranslator = getMessageTranslator();
-    }
-
-    private @NonNull AuctionMessageTranslator getMessageTranslator() {
-        final AuctionMessageTranslator messageTranslator;
-        auction.join();
-        messageTranslator = new AuctionMessageTranslator(
-            new AuctionSniper(this, auction)
-        );
-        return messageTranslator;
     }
 
     @JmsListener(destination = "${messaging.sniper.queue}")
