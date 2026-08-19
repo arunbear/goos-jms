@@ -1,7 +1,9 @@
 package org.example.auctionsniper;
 
 import org.springframework.jms.core.JmsClient;
+import org.springframework.stereotype.Service;
 
+@Service
 class JMSAuction implements Auction {
     private final JmsClient jmsClient;
     private final ConfigProperties properties;

@@ -4,7 +4,6 @@ import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jms.annotation.JmsListener;
-import org.springframework.jms.core.JmsClient;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Controller;
 
@@ -23,15 +22,13 @@ public class MainWindow extends JFrame implements SniperListener {
 
     private final JLabel sniperStatus = createLabel(STATUS_JOINING);
 
-    private final ConfigProperties properties;
-    private final JmsClient jmsClient;
+    private final Auction auction;
     private final AuctionMessageTranslator messageTranslator;
 
     private static final Logger logger = LoggerFactory.getLogger(MainWindow.class);
 
-    public MainWindow(ConfigProperties properties, JmsClient jmsClient) throws HeadlessException {
-        this.properties = properties;
-        this.jmsClient = jmsClient;
+    public MainWindow(Auction auction) throws HeadlessException {
+        this.auction = auction;
 
         super("Auction Sniper");
         setName(MAIN_WINDOW_NAME);
@@ -41,12 +38,11 @@ public class MainWindow extends JFrame implements SniperListener {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        messageTranslator = getMessageTranslator(properties, jmsClient);
+        messageTranslator = getMessageTranslator();
     }
 
-    private @NonNull AuctionMessageTranslator getMessageTranslator(ConfigProperties properties, JmsClient jmsClient) {
+    private @NonNull AuctionMessageTranslator getMessageTranslator() {
         final AuctionMessageTranslator messageTranslator;
-        Auction auction = new JMSAuction(jmsClient, properties);
         auction.join();
         messageTranslator = new AuctionMessageTranslator(
             new AuctionSniper(this, auction)
