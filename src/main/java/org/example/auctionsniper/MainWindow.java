@@ -54,10 +54,6 @@ public class MainWindow extends JFrame implements SniperListener {
         return messageTranslator;
     }
 
-    public void joinAuction() {
-        jmsClient.destination(properties.auction().queue()).send("");
-    }
-
     @JmsListener(destination = "${messaging.sniper.queue}")
     public void receiveMessage(@Payload(required = false) String message) {
         logger.info("Received a message: {}", message);
@@ -85,7 +81,7 @@ public class MainWindow extends JFrame implements SniperListener {
         sniperStatus.setText(status);
     }
 
-    private class JMSAuction implements Auction {
+    private static class JMSAuction implements Auction {
         private final JmsClient jmsClient;
         private final ConfigProperties properties;
 
@@ -102,7 +98,7 @@ public class MainWindow extends JFrame implements SniperListener {
 
         @Override
         public void join() {
-            joinAuction();
+            jmsClient.destination(properties.auction().queue()).send("");
         }
     }
 }
