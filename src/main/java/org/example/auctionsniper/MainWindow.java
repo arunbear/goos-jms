@@ -1,5 +1,6 @@
 package org.example.auctionsniper;
 
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jms.annotation.JmsListener;
@@ -40,6 +41,11 @@ public class MainWindow extends JFrame implements SniperListener {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+        messageTranslator = getMessageTranslator(properties, jmsClient);
+    }
+
+    private @NonNull AuctionMessageTranslator getMessageTranslator(ConfigProperties properties, JmsClient jmsClient) {
+        final AuctionMessageTranslator messageTranslator;
         Auction auction = new Auction() {
             @Override
             public void bid(int amount) {
@@ -52,10 +58,11 @@ public class MainWindow extends JFrame implements SniperListener {
                 joinAuction();
             }
         };
-        messageTranslator = new AuctionMessageTranslator(
-                new AuctionSniper(this, auction)
-        );
         auction.join();
+        messageTranslator = new AuctionMessageTranslator(
+            new AuctionSniper(this, auction)
+        );
+        return messageTranslator;
     }
 
     public void joinAuction() {
