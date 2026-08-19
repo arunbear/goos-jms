@@ -23,7 +23,6 @@ public class SpringBootSwingCommandLineRunner implements CommandLineRunner {
         //This boots up the GUI.
         EventQueue.invokeLater(() -> {
             controller.setVisible(true);
-            controller.joinAuction();
         });
     }
 }

@@ -24,6 +24,7 @@ public class MainWindow extends JFrame implements SniperListener {
 
     private final ConfigProperties properties;
     private final JmsClient jmsClient;
+    private final AuctionMessageTranslator messageTranslator;
 
     private static final Logger logger = LoggerFactory.getLogger(MainWindow.class);
 
@@ -38,6 +39,23 @@ public class MainWindow extends JFrame implements SniperListener {
 
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        Auction auction = new Auction() {
+            @Override
+            public void bid(int amount) {
+                var bidMessage = "SOLVersion: 1.1; Command: BID; Price: %d;".formatted(amount);
+                jmsClient.destination(properties.auction().queue()).send(bidMessage);
+            }
+
+            @Override
+            public void join() {
+                joinAuction();
+            }
+        };
+        messageTranslator = new AuctionMessageTranslator(
+                new AuctionSniper(this, auction)
+        );
+        auction.join();
     }
 
     public void joinAuction() {
@@ -47,17 +65,6 @@ public class MainWindow extends JFrame implements SniperListener {
     @JmsListener(destination = "${messaging.sniper.queue}")
     public void receiveMessage(@Payload(required = false) String message) {
         logger.info("Received a message: {}", message);
-        Auction auction = new Auction() {
-            @Override
-            public void bid(int amount) {
-                var bidMessage = "SOLVersion: 1.1; Command: BID; Price: %d;".formatted(amount);
-                jmsClient.destination(properties.auction().queue()).send(bidMessage);
-            }
-        };
-        var messageTranslator =
-            new AuctionMessageTranslator(
-                new AuctionSniper(this, auction)
-            );
         messageTranslator.processMessage(message);
     }
 
