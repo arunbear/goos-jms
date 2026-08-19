@@ -32,7 +32,7 @@ public class MainWindow extends JFrame implements SniperListener {
         auction.join();
 
         messageTranslator = new AuctionMessageTranslator(
-            new AuctionSniper(this, auction)
+            new AuctionSniper(auction, this)
         );
         setName(MAIN_WINDOW_NAME);
         add(sniperStatus);

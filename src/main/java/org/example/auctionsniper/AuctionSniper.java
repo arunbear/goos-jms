@@ -9,7 +9,7 @@ public class AuctionSniper implements AuctionEventListener {
 
     private static final Logger logger = LoggerFactory.getLogger(AuctionSniper.class);
 
-    public AuctionSniper(SniperListener sniperListener, Auction auction) {
+    public AuctionSniper(Auction auction, SniperListener sniperListener) {
         this.sniperListener = sniperListener;
         this.auction = auction;
     }

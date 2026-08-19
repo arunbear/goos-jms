@@ -28,7 +28,7 @@ public class AuctionSniperTest {
 
     @BeforeEach
     void setUp() {
-        auctionSniper = new AuctionSniper(sniperListener, auction);
+        auctionSniper = new AuctionSniper(auction, sniperListener);
     }
 
     @Test
