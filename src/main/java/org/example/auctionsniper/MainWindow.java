@@ -11,7 +11,7 @@ import javax.swing.border.LineBorder;
 import java.awt.*;
 
 @Controller
-public class MainWindow extends JFrame implements SniperListener {
+public class MainWindow extends JFrame {
 
     public static final String MAIN_WINDOW_NAME = "Auction Sniper Main";
     public static final String SNIPER_STATUS_NAME = "sniper status";
@@ -32,7 +32,7 @@ public class MainWindow extends JFrame implements SniperListener {
         auction.join();
 
         messageTranslator = new AuctionMessageTranslator(
-            new AuctionSniper(auction, this)
+            new AuctionSniper(auction, new SniperStateDisplayer())
         );
         setName(MAIN_WINDOW_NAME);
         add(sniperStatus);
@@ -48,16 +48,6 @@ public class MainWindow extends JFrame implements SniperListener {
         messageTranslator.processMessage(message);
     }
 
-    @Override
-    public void sniperLost() {
-        showStatus(STATUS_LOST);
-    }
-
-    @Override
-    public void sniperBidding() {
-        showStatus(STATUS_BIDDING);
-    }
-
     private static JLabel createLabel(String initialText) {
         JLabel result = new JLabel(initialText);
         result.setName(SNIPER_STATUS_NAME);
@@ -65,8 +55,20 @@ public class MainWindow extends JFrame implements SniperListener {
         return result;
     }
 
-    public void showStatus(String status) {
-        sniperStatus.setText(status);
-    }
+    public class SniperStateDisplayer implements SniperListener {
 
+        @Override
+        public void sniperLost() {
+            showStatus(STATUS_LOST);
+        }
+
+        @Override
+        public void sniperBidding() {
+            showStatus(STATUS_BIDDING);
+        }
+
+        private void showStatus(String status) {
+            sniperStatus.setText(status);
+        }
+    }
 }
