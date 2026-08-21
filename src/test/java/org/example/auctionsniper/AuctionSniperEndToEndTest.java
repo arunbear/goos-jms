@@ -49,13 +49,13 @@ public class AuctionSniperEndToEndTest {
         then(app.isVisible()).isTrue();
         then(app.getName()).isEqualTo("Auction Sniper Main");
 
-        sniper_shows_it_is_joining_auction(app);
+        app_has_shown_sniper_is_joining_auction(app);
         auction_checks_for_joining_message_from_sniper();
 
         // when
         auctionAnnouncesItHasClosed();
         // then
-        sniper_shows_it_has_lost_auction(app);
+        app_shows_sniper_has_lost_auction(app);
     }
 
     @Test
@@ -64,18 +64,18 @@ public class AuctionSniperEndToEndTest {
         // given
         var app = context.getBean(MainWindow.class);
         // then
-        sniper_shows_it_is_joining_auction(app);
+        app_has_shown_sniper_is_joining_auction(app);
         auction_checks_for_joining_message_from_sniper();
 
         // when
         auctionReportsPrice(1000, 98, "other bidder");
         // then
         auction_has_received_bid(1098);
-        sniper_shows_it_is_bidding(app);
+        app_has_shown_sniper_is_bidding(app);
 
         // and when
         auctionAnnouncesItHasClosed();
-        sniper_shows_it_has_lost_auction(app);
+        app_shows_sniper_has_lost_auction(app);
     }
 
     private void auction_has_received_bid(int bid) {
@@ -90,7 +90,7 @@ public class AuctionSniperEndToEndTest {
             .isEqualTo("SOLVersion: 1.1; Command: BID; Price: %d;".formatted(bid));
     }
 
-    private void sniper_shows_it_is_joining_auction(Container app) {
+    private void app_has_shown_sniper_is_joining_auction(Container app) {
         // when
         var status = findComponentByNameAsType(app, MainWindow.SNIPER_STATUS_NAME, JLabel.class);
 
@@ -106,7 +106,7 @@ public class AuctionSniperEndToEndTest {
         then(message).isNotEmpty();
     }
 
-    private void sniper_shows_it_has_lost_auction(Container app) {
+    private void app_shows_sniper_has_lost_auction(Container app) {
         log.info("Checking sniper status");
         JLabel status = findComponentByNameAsType(app, MainWindow.SNIPER_STATUS_NAME, JLabel.class);
 
@@ -119,18 +119,11 @@ public class AuctionSniperEndToEndTest {
         });
     }
 
-    private void sniper_shows_it_is_bidding(Container app) {
+    private void app_has_shown_sniper_is_bidding(Container app) {
         log.info("Checking sniper status");
         JLabel status = findComponentByNameAsType(app, MainWindow.SNIPER_STATUS_NAME, JLabel.class);
 
         then(status.getText()).isEqualTo(MainWindow.STATUS_BIDDING);
-//        await().untilAsserted(() -> {
-//            // Wait for the sniper to get the message, otherwise we won't detect the status change.
-//            // In the book they use an external XMPP server for messaging, which introduces an actual delay.
-//            // We don't have that here due to using an embedded JMS broker.
-//
-//            then(status.getText()).isEqualTo(MainWindow.STATUS_BIDDING);
-//        });
     }
 
     void auctionAnnouncesItHasClosed() {
