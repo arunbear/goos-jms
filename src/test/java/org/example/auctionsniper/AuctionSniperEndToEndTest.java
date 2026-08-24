@@ -50,7 +50,7 @@ public class AuctionSniperEndToEndTest {
         then(app.getName()).isEqualTo("Auction Sniper Main");
 
         app_has_shown_sniper_is_joining_auction(app);
-        auction_checks_for_joining_message_from_sniper();
+        auction_has_received_joining_message_from_sniper();
 
         // when
         auctionAnnouncesItHasClosed();
@@ -65,7 +65,7 @@ public class AuctionSniperEndToEndTest {
         var app = context.getBean(MainWindow.class);
         // then
         app_has_shown_sniper_is_joining_auction(app);
-        auction_checks_for_joining_message_from_sniper();
+        auction_has_received_joining_message_from_sniper();
 
         // when
         auctionReportsPrice(1000, 98, "other bidder");
@@ -76,6 +76,26 @@ public class AuctionSniperEndToEndTest {
         // and when
         auctionAnnouncesItHasClosed();
         app_shows_sniper_has_lost_auction(app);
+    }
+
+    @Test
+    @DirtiesContext
+    void sniper_wins_an_auction_by_bidding_higher(ApplicationContext context) {
+        // given
+        var app = context.getBean(MainWindow.class);
+          app_has_shown_sniper_is_joining_auction(app);
+          auction_has_received_joining_message_from_sniper();
+
+        var When = this;
+        When.auctionReportsPrice(1000, 98, "other bidder");
+          auction_has_received_bid(1098);
+          app_has_shown_sniper_is_bidding(app);
+
+        When.auctionReportsPrice(1098, 97, "other bidder");
+          app_has_shown_sniper_is_winning(app);
+
+        When.auctionAnnouncesItHasClosed();
+          app_shows_sniper_has_won_auction(app);
     }
 
     private void auction_has_received_bid(int bid) {
@@ -97,7 +117,21 @@ public class AuctionSniperEndToEndTest {
         then(status.getText()).isEqualTo(MainWindow.STATUS_JOINING);
     }
 
-    private void auction_checks_for_joining_message_from_sniper() {
+    private void app_has_shown_sniper_is_winning(Container app) {
+        // when
+        var status = findComponentByNameAsType(app, MainWindow.SNIPER_STATUS_NAME, JLabel.class);
+
+        then(status.getText()).isEqualTo(MainWindow.STATUS_WINNING);
+    }
+
+    private void app_shows_sniper_has_won_auction(Container app) {
+        // when
+        var status = findComponentByNameAsType(app, MainWindow.SNIPER_STATUS_NAME, JLabel.class);
+
+        then(status.getText()).isEqualTo(MainWindow.STATUS_WON);
+    }
+
+    private void auction_has_received_joining_message_from_sniper() {
         // when
         var message = jmsClient.destination(configProperties.auction().queue())
             .withReceiveTimeout(1000)
