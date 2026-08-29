@@ -8,8 +8,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.example.auctionsniper.AuctionEventListener.PriceSource.FROM_OTHER_BIDDER;
 import static org.mockito.Mockito.verify;
+import org.example.auctionsniper.AuctionEventListener.PriceSource;
 
 @ExtendWith(MockitoExtension.class)
 @IndicativeSentencesGeneration(
@@ -18,6 +18,8 @@ import static org.mockito.Mockito.verify;
 )
 class AuctionMessageTranslatorTest {
 
+    private static final String SNIPER_ID = "sniper";
+
     @Mock
     private AuctionEventListener listener;
 
@@ -25,7 +27,7 @@ class AuctionMessageTranslatorTest {
 
     @BeforeEach
     void setUp() {
-        translator = new AuctionMessageTranslator(listener);
+        translator = new AuctionMessageTranslator(SNIPER_ID, listener);
     }
 
     @Test
@@ -45,6 +47,15 @@ class AuctionMessageTranslatorTest {
 
         translator.processMessage(message);
 
-        verify(listener).currentPrice(192, 7, FROM_OTHER_BIDDER);
+        verify(listener).currentPrice(192, 7, PriceSource.FROM_OTHER_BIDDER);
+    }
+
+    @Test
+    void notifies_bid_details_when_current_price_message_received_from_sniper() {
+        var message = "SOLVersion: 1.1; Event: PRICE; CurrentPrice: 234; Increment: 5; Bidder: %s;".formatted(SNIPER_ID);
+
+        translator.processMessage(message);
+
+        verify(listener).currentPrice(234, 5, PriceSource.FROM_SNIPER);
     }
 }

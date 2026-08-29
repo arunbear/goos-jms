@@ -33,7 +33,9 @@ public class MainWindow extends JFrame {
         this.auction = auction;
         auction.join();
 
+        final var sniperId = "sniper-1"; // todo fix hard coding
         messageTranslator = new AuctionMessageTranslator(
+            sniperId,
             new AuctionSniper(auction, new SniperStateDisplayer())
         );
         setName(MAIN_WINDOW_NAME);
