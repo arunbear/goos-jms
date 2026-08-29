@@ -8,6 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.example.auctionsniper.AuctionEventListener.PriceSource.FROM_OTHER_BIDDER;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -39,13 +40,11 @@ class AuctionMessageTranslatorTest {
     }
 
     @Test
-    void notifies_bid_details_when_current_price_message_received() {
-        // given
+    void notifies_bid_details_when_current_price_message_received_from_other_bidder() {
         var message = "SOLVersion: 1.1; Event: PRICE; CurrentPrice: 192; Increment: 7; Bidder: Someone else;";
 
-        // when
         translator.processMessage(message);
 
-        verify(listener).currentPrice(192, 7);
+        verify(listener).currentPrice(192, 7, FROM_OTHER_BIDDER);
     }
 }

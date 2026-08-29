@@ -18,7 +18,7 @@ public class AuctionMessageTranslator {
 
         switch (event.type()) {
             case "CLOSE" -> listener.auctionClosed();
-            case "PRICE" -> listener.currentPrice( event.currentPrice(), event.increment() );
+            case "PRICE" -> listener.currentPrice( event.currentPrice(), event.increment(), AuctionEventListener.PriceSource.FROM_OTHER_BIDDER);
             default -> {
             }
         }
