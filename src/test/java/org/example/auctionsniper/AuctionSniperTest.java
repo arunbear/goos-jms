@@ -8,8 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @IndicativeSentencesGeneration(
@@ -52,5 +51,15 @@ public class AuctionSniperTest {
         // then
         verify(auction).bid(price + increment);
         verify(sniperListener, atLeastOnce()).sniperBidding();
+    }
+
+    @Test
+    void reports_winning_when_current_price_comes_from_sniper() {
+        final int price = 1001;
+        final int increment = 25;
+
+        auctionSniper.currentPrice(price, increment, AuctionEventListener.PriceSource.FROM_SNIPER);
+
+        verify(sniperListener).sniperWinning();
     }
 }

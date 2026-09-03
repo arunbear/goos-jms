@@ -71,6 +71,11 @@ public class MainWindow extends JFrame {
             showStatus(STATUS_BIDDING);
         }
 
+        @Override
+        public void sniperWinning() {
+            showStatus(STATUS_WINNING);
+        }
+
         private void showStatus(String status) {
             sniperStatus.setText(status);
         }
