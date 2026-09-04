@@ -12,6 +12,7 @@ messaging:
     queue: queue-auction-house
   sniper:
     queue: queue-sniper
+    id: sniper-1
 
 logging:
   level:

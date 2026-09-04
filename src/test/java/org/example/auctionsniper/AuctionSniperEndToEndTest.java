@@ -82,6 +82,7 @@ public class AuctionSniperEndToEndTest {
     @DirtiesContext
     void sniper_wins_an_auction_by_bidding_higher(ApplicationContext context) {
         // given
+        final var sniperId = configProperties.sniper().id();
         var app = context.getBean(MainWindow.class);
           app_has_shown_sniper_is_joining_auction(app);
           auction_has_received_joining_message_from_sniper();
@@ -91,11 +92,11 @@ public class AuctionSniperEndToEndTest {
           auction_has_received_bid(1098);
           app_has_shown_sniper_is_bidding(app);
 
-        When.auctionReportsPrice(1098, 97, "other bidder");
+        When.auctionReportsPrice(1098, 97, sniperId);
           app_has_shown_sniper_is_winning(app);
 
         When.auctionAnnouncesItHasClosed();
-          app_shows_sniper_has_won_auction(app);
+          app_shows_sniper_has_won_auction(app); // fails
     }
 
     private void auction_has_received_bid(int bid) {
@@ -121,14 +122,18 @@ public class AuctionSniperEndToEndTest {
         // when
         var status = findComponentByNameAsType(app, MainWindow.SNIPER_STATUS_NAME, JLabel.class);
 
-        then(status.getText()).isEqualTo(MainWindow.STATUS_WINNING);
+        await().untilAsserted(() -> {
+            then(status.getText()).isEqualTo(MainWindow.STATUS_WINNING);
+        });
     }
 
     private void app_shows_sniper_has_won_auction(Container app) {
         // when
         var status = findComponentByNameAsType(app, MainWindow.SNIPER_STATUS_NAME, JLabel.class);
 
-        then(status.getText()).isEqualTo(MainWindow.STATUS_WON);
+        await().untilAsserted(() -> {
+            then(status.getText()).isEqualTo(MainWindow.STATUS_WON);
+        });
     }
 
     private void auction_has_received_joining_message_from_sniper() {

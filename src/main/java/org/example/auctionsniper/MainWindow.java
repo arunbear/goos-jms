@@ -25,17 +25,18 @@ public class MainWindow extends JFrame {
 
     private final Auction auction;
     private final AuctionMessageTranslator messageTranslator;
+    private final ConfigProperties properties;
 
     private static final Logger logger = LoggerFactory.getLogger(MainWindow.class);
 
-    public MainWindow(Auction auction) throws HeadlessException {
+    public MainWindow(Auction auction, ConfigProperties properties) throws HeadlessException {
         super("Auction Sniper");
         this.auction = auction;
+        this.properties = properties;
         auction.join();
 
-        final var sniperId = "sniper-1"; // todo fix hard coding
         messageTranslator = new AuctionMessageTranslator(
-            sniperId,
+            properties.sniper().id(),
             new AuctionSniper(auction, new SniperStateDisplayer())
         );
         setName(MAIN_WINDOW_NAME);
