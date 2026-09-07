@@ -1,5 +1,6 @@
 package org.example.auctionsniper;
 
+import org.example.auctionsniper.AuctionEventListener.PriceSource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.IndicativeSentencesGeneration;
@@ -9,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 @IndicativeSentencesGeneration(
@@ -31,11 +33,20 @@ public class AuctionSniperTest {
     }
 
     @Test
-    void reports_lost_when_auction_closes() {
+    void reports_lost_if_auction_closes_immediately() {
         // when
         auctionSniper.auctionClosed();
 
         // then
+        verify(sniperListener).sniperLost();
+    }
+
+    @Test
+    void reports_lost_if_auction_closes_when_bidding() {
+        auctionSniper.currentPrice(123, 45, PriceSource.FROM_OTHER_BIDDER);
+        auctionSniper.auctionClosed();
+
+        verify(sniperListener).sniperBidding();
         verify(sniperListener).sniperLost();
     }
 
@@ -46,7 +57,7 @@ public class AuctionSniperTest {
         final int increment = 25;
 
         // when
-        auctionSniper.currentPrice(price, increment, AuctionEventListener.PriceSource.FROM_OTHER_BIDDER);
+        auctionSniper.currentPrice(price, increment, PriceSource.FROM_OTHER_BIDDER);
 
         // then
         verify(auction).bid(price + increment);
@@ -58,7 +69,7 @@ public class AuctionSniperTest {
         final int price = 1001;
         final int increment = 25;
 
-        auctionSniper.currentPrice(price, increment, AuctionEventListener.PriceSource.FROM_SNIPER);
+        auctionSniper.currentPrice(price, increment, PriceSource.FROM_SNIPER);
 
         verify(sniperListener).sniperWinning();
     }
