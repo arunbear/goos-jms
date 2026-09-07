@@ -73,4 +73,13 @@ public class AuctionSniperTest {
 
         verify(sniperListener).sniperWinning();
     }
+
+    @Test
+    void reports_won_if_auction_closes_when_winning() {
+        auctionSniper.currentPrice(123, 45, PriceSource.FROM_SNIPER);
+        auctionSniper.auctionClosed();
+
+        verify(sniperListener).sniperWinning();
+        verify(sniperListener).sniperWon();
+    }
 }

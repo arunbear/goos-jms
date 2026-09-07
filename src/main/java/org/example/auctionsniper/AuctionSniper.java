@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 public class AuctionSniper implements AuctionEventListener {
     private final SniperListener sniperListener;
     private final Auction auction;
+    private boolean isWinning;
 
     private static final Logger logger = LoggerFactory.getLogger(AuctionSniper.class);
 
@@ -16,17 +17,24 @@ public class AuctionSniper implements AuctionEventListener {
 
     @Override
     public void auctionClosed() {
-        sniperListener.sniperLost();
+        if (isWinning) {
+            sniperListener.sniperWon();
+        }
+        else {
+            sniperListener.sniperLost();
+        }
     }
 
     @Override
     public void currentPrice(int price, int increment, PriceSource priceSource) {
-        switch (priceSource) {
-            case FROM_OTHER_BIDDER -> {
-                auction.bid(price + increment);
-                sniperListener.sniperBidding();
-            }
-            case FROM_SNIPER -> sniperListener.sniperWinning();
+        isWinning = priceSource == PriceSource.FROM_SNIPER;
+
+        if (isWinning) {
+            sniperListener.sniperWinning();
+        }
+        else {
+            auction.bid(price + increment);
+            sniperListener.sniperBidding();
         }
     }
 }
