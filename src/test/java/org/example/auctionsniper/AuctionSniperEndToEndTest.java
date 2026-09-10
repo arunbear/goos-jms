@@ -112,28 +112,15 @@ public class AuctionSniperEndToEndTest {
     }
 
     private void app_has_shown_sniper_is_joining_auction(Container app) {
-        // when
-        var status = findComponentByNameAsType(app, MainWindow.SNIPER_STATUS_NAME, JLabel.class);
-
-        then(status.getText()).isEqualTo(MainWindow.STATUS_JOINING);
+        shows_sniper_status(app, MainWindow.STATUS_JOINING);
     }
 
     private void app_has_shown_sniper_is_winning(Container app) {
-        // when
-        var status = findComponentByNameAsType(app, MainWindow.SNIPER_STATUS_NAME, JLabel.class);
-
-        await().untilAsserted(() -> {
-            then(status.getText()).isEqualTo(MainWindow.STATUS_WINNING);
-        });
+        shows_sniper_status(app, MainWindow.STATUS_WINNING);
     }
 
     private void app_shows_sniper_has_won_auction(Container app) {
-        // when
-        var status = findComponentByNameAsType(app, MainWindow.SNIPER_STATUS_NAME, JLabel.class);
-
-        await().untilAsserted(() -> {
-            then(status.getText()).isEqualTo(MainWindow.STATUS_WON);
-        });
+        shows_sniper_status(app, MainWindow.STATUS_WON);
     }
 
     private void auction_has_received_joining_message_from_sniper() {
@@ -146,23 +133,24 @@ public class AuctionSniperEndToEndTest {
     }
 
     private void app_shows_sniper_has_lost_auction(Container app) {
-        log.info("Checking sniper status");
-        JLabel status = findComponentByNameAsType(app, MainWindow.SNIPER_STATUS_NAME, JLabel.class);
+        shows_sniper_status(app, MainWindow.STATUS_LOST);
+    }
+
+    private void app_has_shown_sniper_is_bidding(Container app) {
+        shows_sniper_status(app, MainWindow.STATUS_BIDDING);
+    }
+
+    private void shows_sniper_status(Container app, String expectedStatus) {
+        // when
+        var status = findComponentByNameAsType(app, MainWindow.SNIPER_STATUS_NAME, JLabel.class);
 
         await().untilAsserted(() -> {
             // Wait for the sniper to get the message, otherwise we won't detect the status change.
             // In the book they use an external XMPP server for messaging, which introduces an actual delay.
             // We don't have that here due to using an embedded JMS broker.
 
-            then(status.getText()).isEqualTo(MainWindow.STATUS_LOST);
+            then(status.getText()).isEqualTo(expectedStatus);
         });
-    }
-
-    private void app_has_shown_sniper_is_bidding(Container app) {
-        log.info("Checking sniper status");
-        JLabel status = findComponentByNameAsType(app, MainWindow.SNIPER_STATUS_NAME, JLabel.class);
-
-        then(status.getText()).isEqualTo(MainWindow.STATUS_BIDDING);
     }
 
     void auctionAnnouncesItHasClosed() {
