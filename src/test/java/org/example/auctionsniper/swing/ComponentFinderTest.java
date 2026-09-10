@@ -63,4 +63,18 @@ public class ComponentFinderTest {
         JButton result = ComponentFinder.findComponentByNameAsType(outer, "nestedButton", JButton.class);
         then(result).isSameAs(button);
     }
+
+    @Test
+    void we_can_read_a_cell_in_a_JTable() {
+        // given
+        JTable table = new JTable(new Object[][]{{"Single Cell"}}, new String[]{"Header"});
+        table.setName("myTable");
+        JPanel panel = new JPanel();
+        panel.add(table);
+
+        // when
+        JTable result = ComponentFinder.findComponentByNameAsType(panel, "myTable", JTable.class);
+        then(result).isSameAs(table);
+        then(result.getValueAt(0, 0)).isEqualTo("Single Cell");
+    }
 }
