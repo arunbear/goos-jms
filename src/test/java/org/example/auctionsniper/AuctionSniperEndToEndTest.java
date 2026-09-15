@@ -138,14 +138,15 @@ public class AuctionSniperEndToEndTest {
 
     private void shows_sniper_status(String expectedStatus) {
         // when
-        var status = findComponentByNameAsType(this.app, MainWindow.SNIPER_STATUS_NAME, JLabel.class);
+        var table = findComponentByNameAsType(this.app, MainWindow.SNIPERS_TABLE_NAME, JTable.class);
 
         await().untilAsserted(() -> {
             // Wait for the sniper to get the message, otherwise we won't detect the status change.
-            // In the book they use an external XMPP server for messaging, which introduces an actual delay.
-            // We don't have that here due to using an embedded JMS broker.
+            // In the book they use an external XMPP server for messaging, which introduces a longer delay
+            // than we have here due to using an embedded JMS broker.
 
-            then(status.getText()).isEqualTo(expectedStatus);
+            final int row = 0, column = 0;
+            then(table.getValueAt(row, column)).isEqualTo(expectedStatus);
         });
     }
 

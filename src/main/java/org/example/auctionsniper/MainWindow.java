@@ -7,21 +7,21 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Controller;
 
 import javax.swing.*;
-import javax.swing.border.LineBorder;
+import javax.swing.table.AbstractTableModel;
 import java.awt.*;
 
 @Controller
 public class MainWindow extends JFrame {
 
     public static final String MAIN_WINDOW_NAME = "Auction Sniper Main";
-    public static final String SNIPER_STATUS_NAME = "sniper status";
     public static final String STATUS_JOINING = "JOINING";
     public static final String STATUS_LOST = "LOST";
     public static final String STATUS_BIDDING = "BIDDING";
     public static final String STATUS_WINNING = "WINNING";
     public static final String STATUS_WON = "WON";
+    public static final String SNIPERS_TABLE_NAME = "Snipers";
 
-    private final JLabel sniperStatus = createLabel(STATUS_JOINING);
+    private final SnipersTableModel snipers = new SnipersTableModel();
 
     private final Auction auction;
     private final AuctionMessageTranslator messageTranslator;
@@ -40,7 +40,7 @@ public class MainWindow extends JFrame {
             new AuctionSniper(auction, new SniperStateDisplayer())
         );
         setName(MAIN_WINDOW_NAME);
-        add(sniperStatus);
+        fillContentPane(makeSnipersTable());
         pack();
 
         setLocationRelativeTo(null);
@@ -53,11 +53,17 @@ public class MainWindow extends JFrame {
         messageTranslator.processMessage(message);
     }
 
-    private static JLabel createLabel(String initialText) {
-        JLabel result = new JLabel(initialText);
-        result.setName(SNIPER_STATUS_NAME);
-        result.setBorder(new LineBorder(Color.BLACK));
-        return result;
+    private void fillContentPane(JTable snipersTable) {
+        Container contentPane = getContentPane();
+        contentPane.setLayout(new BorderLayout());
+
+        contentPane.add(new JScrollPane(snipersTable), BorderLayout.CENTER);
+    }
+
+    private JTable makeSnipersTable() {
+        JTable snipersTable = new JTable(snipers);
+        snipersTable.setName(SNIPERS_TABLE_NAME);
+        return snipersTable;
     }
 
     public class SniperStateDisplayer implements SniperListener {
@@ -83,7 +89,31 @@ public class MainWindow extends JFrame {
         }
 
         private void showStatus(String status) {
-            sniperStatus.setText(status);
+            snipers.setStatusText(status);
+        }
+    }
+
+    static class SnipersTableModel extends AbstractTableModel {
+
+        private String statusText = STATUS_JOINING;
+
+        @Override
+        public int getRowCount() {
+            return 1;
+        }
+
+        @Override
+        public int getColumnCount() {
+            return 1;
+        }
+
+        @Override
+        public Object getValueAt(int rowIndex, int columnIndex) {
+            return statusText;
+        }
+
+        public void setStatusText(String newStatus) {
+             statusText = newStatus;
         }
     }
 }
