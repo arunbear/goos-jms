@@ -30,6 +30,8 @@ public class AuctionSniperEndToEndTest {
 
     private MainWindow app;
 
+    private static final String itemId = "item-54321";
+
     @BeforeAll
     public static void setupHeadlessMode() {
         // https://stackoverflow.com/a/52294064
@@ -85,14 +87,16 @@ public class AuctionSniperEndToEndTest {
 
         var When = this;
         When.auctionReportsPrice(1000, 98, "other bidder");
-          auction_has_received_bid(1098);
-          app_has_shown_sniper_is_bidding();
+        {
+            app_has_shown_sniper_is_bidding(1000, 1098); // last price, last bid. Fails here.
+            auction_has_received_bid(1098);
+        }
 
         When.auctionReportsPrice(1098, 97, sniperId);
-          app_has_shown_sniper_is_winning();
+          app_has_shown_sniper_is_winning(1098); // winning bid
 
         When.auctionAnnouncesItHasClosed();
-          app_shows_sniper_has_won_auction();
+          app_shows_sniper_has_won_auction(1098); // last price
     }
 
     private void auction_has_received_bid(int bid) {
@@ -111,12 +115,12 @@ public class AuctionSniperEndToEndTest {
         shows_sniper_status(MainWindow.STATUS_JOINING);
     }
 
-    private void app_has_shown_sniper_is_winning() {
-        shows_sniper_status(MainWindow.STATUS_WINNING);
+    private void app_has_shown_sniper_is_winning(int winningBid) {
+        shows_sniper_status(winningBid, winningBid, MainWindow.STATUS_WINNING);
     }
 
-    private void app_shows_sniper_has_won_auction() {
-        shows_sniper_status(MainWindow.STATUS_WON);
+    private void app_shows_sniper_has_won_auction(int lastPrice) {
+        shows_sniper_status(lastPrice, lastPrice, MainWindow.STATUS_WON);
     }
 
     private void auction_has_received_joining_message_from_sniper() {
@@ -134,6 +138,28 @@ public class AuctionSniperEndToEndTest {
 
     private void app_has_shown_sniper_is_bidding() {
         shows_sniper_status(MainWindow.STATUS_BIDDING);
+    }
+
+    private void app_has_shown_sniper_is_bidding(int lastPrice, int lastBid) {
+        shows_sniper_status(lastPrice, lastBid, MainWindow.STATUS_BIDDING);
+    }
+
+    private void shows_sniper_status(int lastPrice, int lastBid, String statusText) {
+        // when
+        var table = findComponentByNameAsType(this.app, MainWindow.SNIPERS_TABLE_NAME, JTable.class);
+
+        await().untilAsserted(() -> {
+            // Wait for the sniper to get the message, otherwise we won't detect the status change.
+            // In the book they use an external XMPP server for messaging, which introduces a longer delay
+            // than we have here due to using an embedded JMS broker.
+
+            final int row = 0;
+            then(table.getValueAt(row, 0)).isEqualTo(itemId);
+            then(table.getValueAt(row, 1)).isEqualTo(lastPrice);
+            then(table.getValueAt(row, 2)).isEqualTo(lastBid);
+            then(table.getValueAt(row, 3)).isEqualTo(statusText);
+        });
+
     }
 
     private void shows_sniper_status(String expectedStatus) {
