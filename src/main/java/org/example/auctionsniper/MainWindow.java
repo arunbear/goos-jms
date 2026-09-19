@@ -74,7 +74,7 @@ public class MainWindow extends JFrame {
         }
 
         @Override
-        public void sniperBidding() {
+        public void sniperBidding(SniperState sniperState) {
             showStatus(STATUS_BIDDING);
         }
 

@@ -46,7 +46,7 @@ public class AuctionSniperTest {
         auctionSniper.currentPrice(123, 45, PriceSource.FROM_OTHER_BIDDER);
         auctionSniper.auctionClosed();
 
-        verify(sniperListener).sniperBidding();
+        verify(sniperListener).sniperBidding(any(SniperState.class));
         verify(sniperListener).sniperLost();
     }
 
@@ -55,13 +55,14 @@ public class AuctionSniperTest {
         // given
         final int price = 1001;
         final int increment = 25;
+        final int bid = price + increment;
 
         // when
         auctionSniper.currentPrice(price, increment, PriceSource.FROM_OTHER_BIDDER);
 
         // then
-        verify(auction).bid(price + increment);
-        verify(sniperListener, atLeastOnce()).sniperBidding();
+        verify(auction).bid(bid);
+        verify(sniperListener, atLeastOnce()).sniperBidding(new SniperState("item-123", price, bid));
     }
 
     @Test
