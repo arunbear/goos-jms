@@ -27,6 +27,7 @@ public class MainWindow extends JFrame {
     private final AuctionMessageTranslator messageTranslator;
     private final ConfigProperties properties;
 
+    private static final String ITEM_ID = "item-123";
     private static final Logger logger = LoggerFactory.getLogger(MainWindow.class);
 
     public MainWindow(Auction auction, ConfigProperties properties) throws HeadlessException {
@@ -37,7 +38,7 @@ public class MainWindow extends JFrame {
 
         messageTranslator = new AuctionMessageTranslator(
             properties.sniper().id(),
-            new AuctionSniper(auction, new SniperStateDisplayer())
+            new AuctionSniper(ITEM_ID, auction, new SniperStateDisplayer())
         );
         setName(MAIN_WINDOW_NAME);
         fillContentPane(makeSnipersTable());
