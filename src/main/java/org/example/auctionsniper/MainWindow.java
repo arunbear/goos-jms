@@ -76,7 +76,7 @@ public class MainWindow extends JFrame {
 
         @Override
         public void sniperBidding(SniperState sniperState) {
-            showStatus(STATUS_BIDDING);
+            showStatus(sniperState, STATUS_BIDDING);
         }
 
         @Override
@@ -91,6 +91,10 @@ public class MainWindow extends JFrame {
 
         private void showStatus(String status) {
             snipers.setStatusText(status);
+        }
+
+        private void showStatus(SniperState sniperState, String status) {
+            snipers.setStatusText(sniperState, status);
         }
     }
 
@@ -115,6 +119,10 @@ public class MainWindow extends JFrame {
 
         public void setStatusText(String newStatus) {
              statusText = newStatus;
+        }
+
+        public void setStatusText(SniperState sniperState, String newStatus) {
+            statusText = newStatus;
         }
     }
 }
