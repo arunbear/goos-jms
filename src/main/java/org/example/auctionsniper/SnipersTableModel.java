@@ -5,6 +5,7 @@ import javax.swing.table.AbstractTableModel;
 class SnipersTableModel extends AbstractTableModel {
 
     private String statusText = MainWindow.STATUS_JOINING;
+    private int columnCount = 1; // todo remove when all e2e tests pass
 
     @Override
     public int getRowCount() {
@@ -13,7 +14,7 @@ class SnipersTableModel extends AbstractTableModel {
 
     @Override
     public int getColumnCount() {
-        return 1;
+        return columnCount;
     }
 
     @Override
@@ -27,5 +28,9 @@ class SnipersTableModel extends AbstractTableModel {
 
     public void setStatusText(SniperState sniperState, String newStatus) {
         statusText = newStatus;
+    }
+
+    public void sniperStatusChanged(SniperState newSniperState, String newStatusText) {
+
     }
 }

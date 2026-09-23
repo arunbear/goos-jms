@@ -8,6 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.BDDAssertions.then;
+import static org.example.auctionsniper.MainWindow.STATUS_BIDDING;
 
 @ExtendWith(MockitoExtension.class)
 @IndicativeSentencesGeneration(
@@ -27,6 +28,12 @@ class SnipersTableModelTest {
     void has_enough_columns() {
         then(model.getColumnCount())
             .isEqualTo(Column.values().length); // fails
+    }
+
+    @Test
+    void sets_sniper_values_in_columns() {
+        // when
+        model.sniperStatusChanged(new SniperState("item-id", 123, 456), STATUS_BIDDING);
     }
 
 }
