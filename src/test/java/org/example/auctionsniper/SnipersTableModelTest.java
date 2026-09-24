@@ -33,7 +33,18 @@ class SnipersTableModelTest {
     @Test
     void sets_sniper_values_in_columns() {
         // when
-        model.sniperStatusChanged(new SniperState("item-id", 123, 456), STATUS_BIDDING);
+        model.sniperStatusChanged(new SniperState("item-id", 555, 666), STATUS_BIDDING);
+        assertColumnEquals(Column.ITEM_IDENTIFIER, "item-id");
+        assertColumnEquals(Column.LAST_PRICE, 555);
+        assertColumnEquals(Column.LAST_BID, 666);
+        assertColumnEquals(Column.SNIPER_STATUS, STATUS_BIDDING);
     }
 
+    private void assertColumnEquals(Column column, Object value) {
+        // given
+        int rowIndex = 0;
+        int columnIndex = column.ordinal();
+
+        then(model.getValueAt(rowIndex, columnIndex)).isEqualTo(value);
+    }
 }
