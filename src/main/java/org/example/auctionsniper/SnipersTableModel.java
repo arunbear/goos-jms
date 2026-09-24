@@ -53,5 +53,6 @@ class SnipersTableModel extends AbstractTableModel {
         this.columnCount = Column.values().length;
         this.sniperState = newSniperState;
         this.statusText = newStatusText;
+        fireTableRowsUpdated(0, 0);
     }
 }
