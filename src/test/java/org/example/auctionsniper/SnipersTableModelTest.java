@@ -27,7 +27,7 @@ class SnipersTableModelTest {
     @Test
     void has_enough_columns() {
         then(model.getColumnCount())
-            .isEqualTo(1);
+            .isEqualTo(Column.values().length);
     }
 
     @Test

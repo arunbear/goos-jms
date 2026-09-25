@@ -171,8 +171,8 @@ public class AuctionSniperEndToEndTest {
             // In the book they use an external XMPP server for messaging, which introduces a longer delay
             // than we have here due to using an embedded JMS broker.
 
-            final int row = 0, column = 0;
-            then(table.getValueAt(row, column)).isEqualTo(expectedStatus);
+            final int row = 0;
+            then(table.getValueAt(row, Column.SNIPER_STATUS.ordinal())).isEqualTo(expectedStatus);
         });
     }
 
