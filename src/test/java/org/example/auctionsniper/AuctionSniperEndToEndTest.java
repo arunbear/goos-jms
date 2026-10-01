@@ -88,12 +88,12 @@ public class AuctionSniperEndToEndTest {
         var When = this;
         When.auctionReportsPrice(1000, 98, "other bidder");
         {
-            app_has_shown_sniper_is_bidding(1000, 1098); // last price, last bid. Fails here.
+            app_has_shown_sniper_is_bidding(1000, 1098); // last price, last bid
             auction_has_received_bid(1098);
         }
 
         When.auctionReportsPrice(1098, 97, sniperId);
-          app_has_shown_sniper_is_winning(1098); // winning bid
+          app_has_shown_sniper_is_winning(1098); // winning bid. Fails here.
 
         When.auctionAnnouncesItHasClosed();
           app_shows_sniper_has_won_auction(1098); // last price

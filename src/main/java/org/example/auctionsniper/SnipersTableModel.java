@@ -41,10 +41,6 @@ class SnipersTableModel extends AbstractTableModel {
         statusText = newStatus;
     }
 
-    public void setStatusText(SniperState sniperState, String newStatus) {
-        statusText = newStatus;
-    }
-
     public void sniperStatusChanged(SniperState newSniperState, String newStatusText) {
         this.sniperState = newSniperState;
         this.statusText = newStatusText;

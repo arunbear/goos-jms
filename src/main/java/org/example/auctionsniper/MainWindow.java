@@ -26,7 +26,7 @@ public class MainWindow extends JFrame {
     private final AuctionMessageTranslator messageTranslator;
     private final ConfigProperties properties;
 
-    private static final String ITEM_ID = "item-123";
+    private static final String ITEM_ID = "item-54321";
     private static final Logger logger = LoggerFactory.getLogger(MainWindow.class);
 
     public MainWindow(Auction auction, ConfigProperties properties) throws HeadlessException {
@@ -93,7 +93,7 @@ public class MainWindow extends JFrame {
         }
 
         private void showStatus(SniperState sniperState, String status) {
-            snipers.setStatusText(sniperState, status);
+            SwingUtilities.invokeLater(() -> snipers.sniperStatusChanged(sniperState, status));
         }
     }
 
